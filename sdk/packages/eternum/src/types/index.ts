@@ -146,3 +146,23 @@ export interface CreateRealmProps extends SystemSigner {
   };
   resources: num.BigNumberish[];
 }
+
+export interface GenerateArmyItemProps extends SystemSigner {
+  realm_id: num.BigNumberish;
+  amount: num.BigNumberish;
+}
+
+export interface IssueChallengeProps extends SystemSigner {
+  realm_id: num.BigNumberish,
+  target_realm_id: num.BigNumberish,
+  offer_resources_type: num.BigNumberish,
+  offer_resources_amount: num.BigNumberish,
+  target_resources_type: num.BigNumberish,
+  target_resources_amount: num.BigNumberish,
+}
+
+
+export interface AuditChallengeProps extends SystemSigner {
+  realm_id: num.BigNumberish,
+  challenge_id: num.BigNumberish
+}

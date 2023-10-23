@@ -13,6 +13,7 @@ import useRealmStore from "../../../hooks/store/useRealmStore";
 import RealmStatusComponent from "./RealmStatusComponent";
 import { useGetRealm } from "../../../hooks/helpers/useRealm";
 import { LaborAuction } from "./labor/LaborAuction";
+import { CreateArmyComponent } from '../../CreateArmyComponent'
 
 const RealmManagementComponent = () => {
   const { realmEntityId } = useRealmStore();
@@ -145,6 +146,7 @@ const RealmManagementComponent = () => {
           <Map className="mr-1 fill-current" />
           Show on map
         </button>
+          <CreateArmyComponent />
       </div>
       <LaborAuction />
       <Tabs

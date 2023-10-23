@@ -7,7 +7,6 @@ import { ReactComponent as CloseIcon } from "../assets/icons/common/cross-circle
 import { SecondaryPopup } from "../elements/SecondaryPopup";
 import { Headline } from "../elements/Headline";
 import Button from "../elements/Button";
-import useScreenOrientation from "../hooks/useScreenOrientation";
 import { useDojo } from "../DojoContext";
 import { NumberInput } from "../elements/NumberInput";
 
@@ -22,21 +21,11 @@ enum StepEnum {
 }
 
 export const FightComponent = ({}: SettingsComponentProps) => {
-  const {
-    account: { accountDisplay },
-  } = useDojo();
+  const {} = useDojo();
   const [showFight, setShowFight] = useState(false);
   const [step, setStep] = useState<StepEnum>();
   const [selfAmount, setSelfAmount] = useState(0);
   const [targetAmount, setTargetAmount] = useState(0);
-
-  const { toggleFullScreen, isFullScreen } = useScreenOrientation();
-  const [fullScreen, setFullScreen] = useState<boolean>(isFullScreen());
-
-  const clickFullScreen = () => {
-    setFullScreen(!fullScreen);
-    toggleFullScreen();
-  };
 
   return (
     <div className="flex items-center text-white">
@@ -95,14 +84,14 @@ export const FightComponent = ({}: SettingsComponentProps) => {
               <div className="flex flex-col  space-y-2 p-3">
                 <Headline size="big">Resources</Headline>
                 <FightWaiting className='m-auto' />
-                <div className="text-gold w-full">Waiting for the other person to accept...</div>
+                <div className="text-gold w-full text-center">Waiting for the other person to accept...</div>
               </div>
             )}
             {step === StepEnum.Win && (
               <div className="flex flex-col  space-y-2 p-3">
                 <Headline size="big">Resources</Headline>
-                <FightWin />
-                <div>You have won the war.</div>
+                <FightWin className='m-auto'/>
+                <div className="text-gold w-full text-center">You have won the war.</div>
                 <Button
                     onClick={() => setShowFight(false)}
                     variant="outline"
@@ -115,8 +104,8 @@ export const FightComponent = ({}: SettingsComponentProps) => {
             {step === StepEnum.Lost && (
               <div className="flex flex-col  space-y-2 p-3">
                 <Headline size="big">Resources</Headline>
-                <FightLost />
-                <div>You lost the war.</div>
+                <FightLost className='m-auto'/>
+                <div className="text-gold w-full text-center">You lost the war.</div>
                 <Button
                     onClick={() => setShowFight(false)}
                     variant="outline"
@@ -129,8 +118,8 @@ export const FightComponent = ({}: SettingsComponentProps) => {
             {step === StepEnum.Reject && (
               <div className="flex flex-col  space-y-2 p-3">
                 <Headline size="big">Resources</Headline>
-                <FightReject />
-                <div>User rejected</div>
+                <FightReject className='m-auto' />
+                <div className="text-gold w-full text-center">User rejected</div>
                 <Button
                     onClick={() => setShowFight(false)}
                     variant="outline"

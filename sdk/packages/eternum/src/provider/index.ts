@@ -2,6 +2,7 @@ import { RPCProvider } from "@dojoengine/core";
 import {
   AcceptOrderProps,
   AttachCaravanProps,
+  AuditChallengeProps,
   BuildLaborProps,
   CancelFungibleOrderProps,
   ClaimFungibleOrderProps,
@@ -12,9 +13,11 @@ import {
   CreateRealmProps,
   CreateRoadProps,
   FeedHyperstructureAndTravelBackPropos,
+  GenerateArmyItemProps,
   HarvestLaborProps,
   InitializeHyperstructuresAndTravelProps,
   InitializeHyperstructuresProps,
+  IssueChallengeProps,
   MintResourcesProps,
   PurchaseLaborProps,
   SendResourcesToHyperstructureProps,
@@ -519,6 +522,94 @@ export class EternumProvider extends RPCProvider {
       contractAddress: this.contracts.TRAVEL_SYSTEMS,
       entrypoint: "travel",
       calldata: [this.contracts.WORLD_ADDRESS, travelling_entity_id, destination_coord_x, destination_coord_y],
+    });
+    return await this.provider.waitForTransaction(tx.transaction_hash, {
+      retryInterval: 500,
+    });
+  }
+
+  public async generate_infantry(props: GenerateArmyItemProps) {
+    const { realm_id, amount, signer } = props;
+    const tx = await this.executeMulti(signer, {
+      contractAddress: this.contracts.CHALLENGE_SYSTEMS,
+      entrypoint: "generate_infantry",
+      calldata: [this.contracts.WORLD_ADDRESS, realm_id, amount],
+    });
+    return await this.provider.waitForTransaction(tx.transaction_hash, {
+      retryInterval: 500,
+    });
+  }
+
+  public async generate_cavalry(props: GenerateArmyItemProps) {
+    const { realm_id, amount, signer } = props;
+    const tx = await this.executeMulti(signer, {
+      contractAddress: this.contracts.CHALLENGE_SYSTEMS,
+      entrypoint: "generate_cavalry",
+      calldata: [this.contracts.WORLD_ADDRESS, realm_id, amount],
+    });
+    return await this.provider.waitForTransaction(tx.transaction_hash, {
+      retryInterval: 500,
+    });
+  }
+
+  public async generate_mage(props: GenerateArmyItemProps) {
+    const { realm_id, amount, signer } = props;
+    const tx = await this.executeMulti(signer, {
+      contractAddress: this.contracts.CHALLENGE_SYSTEMS,
+      entrypoint: "generate_mage",
+      calldata: [this.contracts.WORLD_ADDRESS, realm_id, amount],
+    });
+    return await this.provider.waitForTransaction(tx.transaction_hash, {
+      retryInterval: 500,
+    });
+  }
+
+  public async issue_challenge(props: IssueChallengeProps) {
+    const {
+      realm_id,
+      offer_resources_amount,
+      signer,
+      target_resources_amount,
+      target_resources_type,
+      offer_resources_type,
+      target_realm_id,
+    } = props;
+    const tx = await this.executeMulti(signer, {
+      contractAddress: this.contracts.CHALLENGE_SYSTEMS,
+      entrypoint: "issue_challenge",
+      calldata: [
+        this.contracts.WORLD_ADDRESS,
+        realm_id,
+        target_realm_id,
+        offer_resources_type,
+        offer_resources_amount,
+        target_resources_type,
+        target_resources_amount,
+      ],
+    });
+    return await this.provider.waitForTransaction(tx.transaction_hash, {
+      retryInterval: 500,
+    });
+  }
+
+  public async accept_challenge(props: AuditChallengeProps) {
+    const { realm_id, signer, challenge_id } = props;
+    const tx = await this.executeMulti(signer, {
+      contractAddress: this.contracts.CHALLENGE_SYSTEMS,
+      entrypoint: "accept_challenge",
+      calldata: [this.contracts.WORLD_ADDRESS, realm_id, challenge_id],
+    });
+    return await this.provider.waitForTransaction(tx.transaction_hash, {
+      retryInterval: 500,
+    });
+  }
+
+  public async reject_challenge(props: AuditChallengeProps) {
+    const { realm_id, signer, challenge_id } = props;
+    const tx = await this.executeMulti(signer, {
+      contractAddress: this.contracts.CHALLENGE_SYSTEMS,
+      entrypoint: "reject_challenge",
+      calldata: [this.contracts.WORLD_ADDRESS, realm_id, challenge_id],
     });
     return await this.provider.waitForTransaction(tx.transaction_hash, {
       retryInterval: 500,
