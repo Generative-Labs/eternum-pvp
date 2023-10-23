@@ -575,5 +575,41 @@ export function defineContractComponents(world: World) {
         },
       );
     })(),
+    Army: (() => {
+      const name = "Army";
+      return defineComponent(
+          world,
+          {
+            infantry_qty: RecsType.Number,
+            cavalry_qty: RecsType.Number,
+            mage_qty: RecsType.Number,
+          },
+          {
+            metadata: {
+              name: name,
+            },
+          }
+      );
+    })(),
+    Challenges: (() => {
+      const name = "Challenges";
+      return defineComponent(
+          world,
+          {
+            challenge_id: RecsType.Number,
+            sender_id: RecsType.Number,
+            target_id: RecsType.Number,
+            offer_resources_type: RecsType.Number,
+            offer_resources_amount: RecsType.Number,
+            target_resources_type: RecsType.Number,
+            target_resources_amount: RecsType.Number,
+          },
+          {
+            metadata: {
+              name: name,
+            },
+          }
+      );
+    })(),
   };
 }

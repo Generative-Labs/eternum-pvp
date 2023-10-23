@@ -14,7 +14,7 @@ import {
   CreateOrderProps,
   CreateRealmProps,
   CreateRoadProps,
-  FeedHyperstructureAndTravelBackPropos,
+  FeedHyperstructureAndTravelBackPropos, GenerateArmyItemProps,
   HarvestLaborProps,
   InitializeHyperstructuresAndTravelProps,
   MintResourcesProps,
@@ -39,6 +39,9 @@ export function createSystemCalls({ provider, contractComponents }: SetupNetwork
 
   const harvest_labor = async (props: HarvestLaborProps) => {
     setComponentsFromEvents(contractComponents, getEvents(await provider.harvest_labor(props)));
+  };
+  const generate_infantry = async (props: GenerateArmyItemProps) => {
+    setComponentsFromEvents(contractComponents, getEvents(await provider.generate_infantry(props)));
   };
 
   const mint_resources = async (props: MintResourcesProps) => {
@@ -121,6 +124,7 @@ export function createSystemCalls({ provider, contractComponents }: SetupNetwork
     build_labor,
     purchase_and_build_labor,
     harvest_labor,
+    generate_infantry,
     mint_resources,
     create_order,
     accept_order,
