@@ -41,7 +41,12 @@ export function createSystemCalls({ provider, contractComponents }: SetupNetwork
     setComponentsFromEvents(contractComponents, getEvents(await provider.harvest_labor(props)));
   };
   const generate_infantry = async (props: GenerateArmyItemProps) => {
-    setComponentsFromEvents(contractComponents, getEvents(await provider.generate_infantry(props)));
+    console.log(props, 'props')
+    const events = await provider.generate_infantry(props)
+    console.log(events, 'events')
+    const res = getEvents(events)
+    console.log(res, 'res')
+    setComponentsFromEvents(contractComponents, res);
   };
 
   const mint_resources = async (props: MintResourcesProps) => {
@@ -77,11 +82,19 @@ export function createSystemCalls({ provider, contractComponents }: SetupNetwork
   };
 
   const purchase_and_build_labor = async (props: PurchaseLaborProps & BuildLaborProps) => {
-    setComponentsFromEvents(contractComponents, getEvents(await provider.purchase_and_build_labor(props)));
+    const res =await provider.purchase_and_build_labor(props)
+    console.log(res, 'res')
+    const events=  getEvents(res)
+    console.log(events, 'events')
+    setComponentsFromEvents(contractComponents, events);
   };
 
   const create_realm = async (props: CreateRealmProps) => {
-    setComponentsFromEvents(contractComponents, getEvents(await provider.create_realm(props)));
+    const res = await provider.create_realm(props)
+    console.log(res, 'res')
+    const events = getEvents(res)
+    console.log(events, 'events')
+    setComponentsFromEvents(contractComponents, events);
   };
 
   const create_road = async (props: CreateRoadProps) => {

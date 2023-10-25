@@ -49,7 +49,7 @@ export function useRealm() {
 export function useGetRealm(realmEntityId: number | undefined) {
   const {
     setup: {
-      components: { Realm, Position, Owner },
+      components: { Realm, Position, Owner, Army },
     },
   } = useDojo();
 
@@ -61,6 +61,8 @@ export function useGetRealm(realmEntityId: number | undefined) {
       const realm = getComponentValue(Realm, entityId);
       const owner = getComponentValue(Owner, entityId);
       const position = getComponentValue(Position, entityId);
+      const army = getComponentValue(Army, entityId);
+      console.log(army, "army");
 
       if (realm && owner && position) {
         const {
