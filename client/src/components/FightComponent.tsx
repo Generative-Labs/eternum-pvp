@@ -24,7 +24,6 @@ enum StepEnum {
   Reject,
 }
 
-// todo zhaowei get self realm
 export const FightComponent = ({ targetRealm }: FightComponentProps) => {
   const {
     account: { account },
