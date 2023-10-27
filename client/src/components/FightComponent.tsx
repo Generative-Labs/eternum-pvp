@@ -9,31 +9,63 @@ import { Headline } from "../elements/Headline";
 import Button from "../elements/Button";
 import { useDojo } from "../DojoContext";
 import { NumberInput } from "../elements/NumberInput";
+import { ResourcesIds } from "@bibliothecadao/eternum";
+import { useGetRealms } from "../hooks/helpers/useRealm";
 
-type SettingsComponentProps = {};
+type FightComponentProps = {
+  targetRealm: any;
+};
 
 enum StepEnum {
   GetResources,
   Waiting,
   Lost,
   Win,
-  Reject
+  Reject,
 }
 
-export const FightComponent = ({}: SettingsComponentProps) => {
-  const {} = useDojo();
+// todo zhaowei get self realm
+export const FightComponent = ({ targetRealm }: FightComponentProps) => {
+  const {
+    account: { account },
+    setup: {
+      systemCalls: { issue_challenge},
+    },
+  } = useDojo();
+  const { realms } = useGetRealms();
   const [showFight, setShowFight] = useState(false);
   const [step, setStep] = useState<StepEnum>();
   const [selfAmount, setSelfAmount] = useState(0);
   const [targetAmount, setTargetAmount] = useState(0);
 
+  const sendFight = async () => {
+    setStep(StepEnum.Waiting);
+    const selfRealm = realms.find((item) => item.owner.address === account.address);
+    await issue_challenge({
+      realm_id: selfRealm.entity_id,
+      signer: account,
+      offer_resources_amount: 11,
+      target_resources_amount: 11,
+      target_resources_type: ResourcesIds.Wood,
+      offer_resources_type: ResourcesIds.Wood,
+      target_realm_id: targetRealm.entity_id,
+    });
+    // setTimeout(() => {
+    //   setStep(StepEnum.Win)
+    // }, 2000)
+  };
+
   return (
     <div className="flex items-center text-white">
       <div className=" text-gold flex ml-auto ">
-        <Button onClick={() => {
-          setShowFight(true)
-          setStep(StepEnum.GetResources)
-        }} variant="outline" className="p-1 !h-4 text-xxs !rounded-md">
+        <Button
+          onClick={() => {
+            setShowFight(true);
+            setStep(StepEnum.GetResources);
+          }}
+          variant="outline"
+          className="p-1 !h-4 text-xxs !rounded-md"
+        >
           Fight
         </Button>
       </div>
@@ -52,12 +84,12 @@ export const FightComponent = ({}: SettingsComponentProps) => {
                 <div>change wallet</div>
                 <Headline size="big">Your Resources</Headline>
                 <div className="flex items-center">
-                  <div className="italic text-light-pink">Fish Amount:</div>
+                  <div className="italic text-light-pink">Wood Amount:</div>
                   <NumberInput className="ml-2 mr-2" value={selfAmount} step={1} onChange={setSelfAmount} max={9999} />
                 </div>
                 <Headline size="big">Target Resources</Headline>
                 <div className="flex items-center">
-                  <div className="italic text-light-pink">Fish Amount:</div>
+                  <div className="italic text-light-pink">Wood Amount:</div>
                   <NumberInput
                     className="ml-2 mr-2"
                     value={targetAmount}
@@ -66,16 +98,7 @@ export const FightComponent = ({}: SettingsComponentProps) => {
                     max={9999}
                   />
                 </div>
-                <Button
-                  onClick={() => {
-                    setStep(StepEnum.Waiting)
-                    setTimeout(() => {
-                      setStep(StepEnum.Win)
-                    }, 2000)
-                  }}
-                  variant="outline"
-                  className="text-xxs !py-1 !px-2 mr-auto w-full"
-                >
+                <Button onClick={sendFight} variant="outline" className="text-xxs !py-1 !px-2 mr-auto w-full">
                   Send Fight
                 </Button>
               </div>
@@ -83,19 +106,19 @@ export const FightComponent = ({}: SettingsComponentProps) => {
             {step === StepEnum.Waiting && (
               <div className="flex flex-col  space-y-2 p-3">
                 <Headline size="big">Resources</Headline>
-                <FightWaiting className='m-auto' />
+                <FightWaiting className="m-auto" />
                 <div className="text-gold w-full text-center">Waiting for the other person to accept...</div>
               </div>
             )}
             {step === StepEnum.Win && (
               <div className="flex flex-col  space-y-2 p-3">
                 <Headline size="big">Resources</Headline>
-                <FightWin className='m-auto'/>
+                <FightWin className="m-auto" />
                 <div className="text-gold w-full text-center">You have won the war.</div>
                 <Button
-                    onClick={() => setShowFight(false)}
-                    variant="outline"
-                    className="text-xxs !py-1 !px-2 mr-auto w-full"
+                  onClick={() => setShowFight(false)}
+                  variant="outline"
+                  className="text-xxs !py-1 !px-2 mr-auto w-full"
                 >
                   Confirm
                 </Button>
@@ -104,12 +127,12 @@ export const FightComponent = ({}: SettingsComponentProps) => {
             {step === StepEnum.Lost && (
               <div className="flex flex-col  space-y-2 p-3">
                 <Headline size="big">Resources</Headline>
-                <FightLost className='m-auto'/>
+                <FightLost className="m-auto" />
                 <div className="text-gold w-full text-center">You lost the war.</div>
                 <Button
-                    onClick={() => setShowFight(false)}
-                    variant="outline"
-                    className="text-xxs !py-1 !px-2 mr-auto w-full"
+                  onClick={() => setShowFight(false)}
+                  variant="outline"
+                  className="text-xxs !py-1 !px-2 mr-auto w-full"
                 >
                   Confirm
                 </Button>
@@ -118,12 +141,12 @@ export const FightComponent = ({}: SettingsComponentProps) => {
             {step === StepEnum.Reject && (
               <div className="flex flex-col  space-y-2 p-3">
                 <Headline size="big">Resources</Headline>
-                <FightReject className='m-auto' />
+                <FightReject className="m-auto" />
                 <div className="text-gold w-full text-center">User rejected</div>
                 <Button
-                    onClick={() => setShowFight(false)}
-                    variant="outline"
-                    className="text-xxs !py-1 !px-2 mr-auto w-full"
+                  onClick={() => setShowFight(false)}
+                  variant="outline"
+                  className="text-xxs !py-1 !px-2 mr-auto w-full"
                 >
                   Confirm
                 </Button>

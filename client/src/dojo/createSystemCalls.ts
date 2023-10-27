@@ -4,7 +4,7 @@ import { Event } from "starknet";
 import { getEntityIdFromKeys } from "../utils/utils";
 import {
   AcceptOrderProps,
-  AttachCaravanProps,
+  AttachCaravanProps, AuditChallengeProps,
   BuildLaborProps,
   CancelFungibleOrderProps,
   ClaimFungibleOrderProps,
@@ -16,7 +16,7 @@ import {
   CreateRoadProps,
   FeedHyperstructureAndTravelBackPropos, GenerateArmyItemProps,
   HarvestLaborProps,
-  InitializeHyperstructuresAndTravelProps,
+  InitializeHyperstructuresAndTravelProps, IssueChallengeProps,
   MintResourcesProps,
   PurchaseLaborProps,
   SendResourcesToHyperstructureProps,
@@ -41,14 +41,14 @@ export function createSystemCalls({ provider, contractComponents }: SetupNetwork
     setComponentsFromEvents(contractComponents, getEvents(await provider.harvest_labor(props)));
   };
   const generate_infantry = async (props: GenerateArmyItemProps) => {
-    console.log(props, 'props')
-    const events = await provider.generate_infantry(props)
-    console.log(events, 'events')
-    const res = getEvents(events)
-    console.log(res, 'res')
-    setComponentsFromEvents(contractComponents, res);
+    setComponentsFromEvents(contractComponents, getEvents(await provider.generate_infantry(props)));
   };
-
+  const generate_cavalry = async (props: GenerateArmyItemProps) => {
+    setComponentsFromEvents(contractComponents, getEvents(await provider.generate_cavalry(props)));
+  };
+  const generate_mage = async (props: GenerateArmyItemProps) => {
+    setComponentsFromEvents(contractComponents, getEvents(await provider.generate_mage(props)));
+  };
   const mint_resources = async (props: MintResourcesProps) => {
     setComponentsFromEvents(contractComponents, getEvents(await provider.mint_resources(props)));
   };
@@ -82,19 +82,11 @@ export function createSystemCalls({ provider, contractComponents }: SetupNetwork
   };
 
   const purchase_and_build_labor = async (props: PurchaseLaborProps & BuildLaborProps) => {
-    const res =await provider.purchase_and_build_labor(props)
-    console.log(res, 'res')
-    const events=  getEvents(res)
-    console.log(events, 'events')
-    setComponentsFromEvents(contractComponents, events);
+    setComponentsFromEvents(contractComponents, getEvents(await provider.purchase_and_build_labor(props)));
   };
 
   const create_realm = async (props: CreateRealmProps) => {
-    const res = await provider.create_realm(props)
-    console.log(res, 'res')
-    const events = getEvents(res)
-    console.log(events, 'events')
-    setComponentsFromEvents(contractComponents, events);
+    setComponentsFromEvents(contractComponents, getEvents(await provider.create_realm(props)));
   };
 
   const create_road = async (props: CreateRoadProps) => {
@@ -131,6 +123,19 @@ export function createSystemCalls({ provider, contractComponents }: SetupNetwork
   const travel = async (props: TravelProps) => {
     setComponentsFromEvents(contractComponents, getEvents(await provider.travel(props)));
   };
+  const issue_challenge = async (props: IssueChallengeProps) => {
+    const res = await provider.issue_challenge(props)
+    const events = getEvents(res)
+    setComponentsFromEvents(contractComponents, events);
+  };
+  const accept_challenge = async (props: AuditChallengeProps) => {
+    setComponentsFromEvents(contractComponents, getEvents(await provider.accept_challenge(props)));
+  };
+  const reject_challenge = async (props: AuditChallengeProps) => {
+    const res = await provider.reject_challenge(props)
+    const events = getEvents(res)
+    setComponentsFromEvents(contractComponents, events);
+  };
 
   return {
     purchase_labor,
@@ -138,6 +143,11 @@ export function createSystemCalls({ provider, contractComponents }: SetupNetwork
     purchase_and_build_labor,
     harvest_labor,
     generate_infantry,
+    issue_challenge,
+    accept_challenge,
+    reject_challenge,
+    generate_cavalry,
+    generate_mage,
     mint_resources,
     create_order,
     accept_order,

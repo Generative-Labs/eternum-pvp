@@ -58,6 +58,9 @@ export interface RealmInterface {
   order: number;
   position: PositionInterface;
   owner: string;
+  infantry_qty?: number;
+  cavalry_qty?: number;
+  mage_qty?: number;
 }
 
 export interface RealmLaborInterface {

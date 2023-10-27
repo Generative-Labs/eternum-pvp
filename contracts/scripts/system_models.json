@@ -53,5 +53,10 @@
         "ArrivalTime",
         "Position",
         "Road"
+    ],
+    "CHALLENGE_SYSTEMS": [
+        "Army",
+        "Challenges",
+        "Resource "
     ]
 }

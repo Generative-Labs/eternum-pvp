@@ -7,16 +7,28 @@ import * as realmsData from "../../geodata/realms.json";
 import clsx from "clsx";
 import useUIStore from "../../hooks/store/useUIStore";
 import { displayAddress, numberToHex } from "../../utils/utils";
-import { FightComponent } from '../FightComponent'
+import { FightComponent } from "../FightComponent";
+import { useMemo } from "react";
+import {useDojo} from "../../DojoContext";
 
 type RealmListItemProps = {
   realm: any;
   onlyMyRealms?: boolean;
-  army?: any;
 };
 
-export const RealmListItem = ({ realm, onlyMyRealms = false, army }: RealmListItemProps) => {
+export const RealmListItem = ({ realm, onlyMyRealms = false }: RealmListItemProps) => {
+  const {
+    account: { account },
+  } = useDojo();
   const moveCameraToRealm = useUIStore((state) => state.moveCameraToRealm);
+  const showFightBtn = useMemo(() => {
+    if (!onlyMyRealms) {
+      // all list
+      return account.address !== realm.owner.address;
+    }
+    // my realm
+    return false;
+  }, [realm, onlyMyRealms, account]);
 
   return (
     <div className="flex flex-col p-2 border rounded-md border-gray-gold text-xxs text-gray-gold">
@@ -40,9 +52,7 @@ export const RealmListItem = ({ realm, onlyMyRealms = false, army }: RealmListIt
             Show on map
           </Button>
         </div>
-        {
-          !onlyMyRealms && <FightComponent />
-        }
+        {showFightBtn && <FightComponent targetRealm={realm} />}
       </div>
       <div className="flex items-end mt-2">
         <div className={clsx("flex items-center justify-around flex-1")}>
@@ -74,13 +84,13 @@ export const RealmListItem = ({ realm, onlyMyRealms = false, army }: RealmListIt
       Army:
       <div className="mt-2 space-x-2">
         <div className="text-gold inline-block">
-          infantry_qty: <span className="text-white">{army.infantry_qty}</span>
+          Infantry: <span className="text-white">{realm?.infantry_qty || 0}</span>
         </div>
         <div className="text-gold inline-block">
-          cavalry_qty: <span className="text-white">{army.cavalry_qty}</span>
+          Cavalry: <span className="text-white">{realm?.cavalry_qty || 0}</span>
         </div>
         <div className="text-gold inline-block">
-          mage_qty: <span className="text-white">{army.mage_qty}</span>
+          Mage: <span className="text-white">{realm?.mage_qty || 0}</span>
         </div>
       </div>
     </div>

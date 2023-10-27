@@ -18,11 +18,6 @@ export const RealmsListComponent = ({ onlyMyRealms = false }: RealmsListComponen
   } = useDojo();
 
   const { realms } = useGetRealms();
-  const army = {
-    infantry_qty: 99,
-    cavalry_qty: 99,
-    mage_qty: 99
-  }
 
   const myRealms = onlyMyRealms ? useEntityQuery([Has(Realm), HasValue(Owner, { address: account.address })]) : [];
 
@@ -38,7 +33,7 @@ export const RealmsListComponent = ({ onlyMyRealms = false }: RealmsListComponen
     <>
       <div className="flex flex-col space-y-2 px-2 my-2">
         {realmsList.map((realm) => {
-          return <RealmListItem army={army} onlyMyRealms={onlyMyRealms} key={realm.entity_id} realm={realm} />;
+          return <RealmListItem onlyMyRealms={onlyMyRealms} key={realm.entity_id} realm={realm} />;
         })}
       </div>
     </>

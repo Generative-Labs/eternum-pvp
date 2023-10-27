@@ -603,6 +603,7 @@ export function defineContractComponents(world: World) {
             offer_resources_amount: RecsType.Number,
             target_resources_type: RecsType.Number,
             target_resources_amount: RecsType.Number,
+            state: RecsType.Number,
           },
           {
             metadata: {

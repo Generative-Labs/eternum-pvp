@@ -11,13 +11,14 @@ import RealmLaborComponent from "./RealmLaborComponent";
 import useUIStore from "../../../hooks/store/useUIStore";
 import useRealmStore from "../../../hooks/store/useRealmStore";
 import RealmStatusComponent from "./RealmStatusComponent";
-import { useGetRealm } from "../../../hooks/helpers/useRealm";
+import {useGetRealm, useGetRealms} from "../../../hooks/helpers/useRealm";
 import { LaborAuction } from "./labor/LaborAuction";
-import { CreateArmyComponent } from '../../CreateArmyComponent'
+import { CreateArmyComponent } from "../../CreateArmyComponent";
 
 const RealmManagementComponent = () => {
   const { realmEntityId } = useRealmStore();
   const { realm } = useGetRealm(realmEntityId);
+  const { armies } = useGetRealms()
 
   const [selectedTab, setSelectedTab] = useState(1);
 
@@ -32,8 +33,11 @@ const RealmManagementComponent = () => {
   const moveCameraToWorldMapView = useUIStore((state) => state.moveCameraToWorldMapView);
   const setIsLoadingScreenEnabled = useUIStore((state) => state.setIsLoadingScreenEnabled);
   const setTooltip = useUIStore((state) => state.setTooltip);
+  const army = useMemo(() => {
+      return armies.find(item => item.entity_id === realmEntityId)
+  }, [armies, realm]);
 
-  useEffect(() => {
+    useEffect(() => {
     if (selectedTab == 0) {
       moveCameraToLaborView();
     } else {
@@ -95,7 +99,8 @@ const RealmManagementComponent = () => {
             onMouseLeave={() => setTooltip(null)}
             className="flex relative group flex-col items-center"
           >
-            <Coin className="mb-2 fill-gold" /> <div>Trade</div>
+            <Coin className="mb-2 fill-gold" />
+            <div>Trade</div>
           </div>
         ),
         component: <RealmTradeComponent />,
@@ -104,7 +109,8 @@ const RealmManagementComponent = () => {
         key: "civilians",
         label: (
           <div className="flex flex-col items-center blur-sm cursor-not-allowed" title="Not implemented">
-            <City className="mb-2 fill-gold" /> <div>Civilians</div>
+            <City className="mb-2 fill-gold" />
+            <div>Civilians</div>
           </div>
         ),
         component: <div></div>,
@@ -113,7 +119,8 @@ const RealmManagementComponent = () => {
         key: "military",
         label: (
           <div className="flex flex-col items-center blur-sm cursor-not-allowed" title="Not implemented">
-            <CrossSwords className="mb-2 fill-gold" /> <div>Military</div>
+            <CrossSwords className="mb-2 fill-gold" />
+            <div>Military</div>
           </div>
         ),
         component: <div></div>,
@@ -146,9 +153,17 @@ const RealmManagementComponent = () => {
           <Map className="mr-1 fill-current" />
           Show on map
         </button>
-          <CreateArmyComponent />
+        <CreateArmyComponent />
       </div>
       <LaborAuction />
+      <div className={"flex items-center text-white text-xxs space-x-4 mx-2"}>
+        <div className="">Infantry:</div>
+        <div className="">{army?.infantry_qty || 0}</div>
+        <div className="">Cavalry:</div>
+        <div className="">{army?.cavalry_qty || 0}</div>
+        <div className="">Mage:</div>
+        <div className="">{army?.mage_qty || 0}</div>
+      </div>
       <Tabs
         selectedIndex={selectedTab}
         onChange={(index: any) => setLocation(`/realm/${realmEntityId}/${tabs[index].key}`)}

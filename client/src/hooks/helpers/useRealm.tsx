@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { RealmInterface } from "../graphql/useGraphQLQueries";
-import { Has, HasValue, getComponentValue, runQuery } from "@latticexyz/recs";
+import { getComponentValue, Has, HasValue, runQuery } from "@latticexyz/recs";
 import { useDojo } from "../../DojoContext";
 import { getEntityIdFromKeys } from "../../utils/utils";
 import { getOrderName } from "@bibliothecadao/eternum";
@@ -54,15 +54,13 @@ export function useGetRealm(realmEntityId: number | undefined) {
   } = useDojo();
 
   const [realm, setRealm] = useState<RealmInterface | undefined>(undefined);
-
   useMemo((): any => {
     if (realmEntityId) {
       let entityId = getEntityIdFromKeys([BigInt(realmEntityId)]);
       const realm = getComponentValue(Realm, entityId);
+      const army = getComponentValue(Army, entityId);
       const owner = getComponentValue(Owner, entityId);
       const position = getComponentValue(Position, entityId);
-      const army = getComponentValue(Army, entityId);
-      console.log(army, "army");
 
       if (realm && owner && position) {
         const {
@@ -89,6 +87,9 @@ export function useGetRealm(realmEntityId: number | undefined) {
           order,
           position,
           owner: address,
+          infantry_qty: army?.infantry_qty || 0,
+          cavalry_qty: army?.cavalry_qty || 0,
+          mage_qty: army?.mage_qty || 0,
         });
       }
     }
@@ -102,26 +103,61 @@ export function useGetRealm(realmEntityId: number | undefined) {
 export function useGetRealms() {
   const {
     setup: {
-      components: { Realm, Owner },
+      components: { Realm, Owner, Army },
     },
   } = useDojo();
 
   const realmEntityIds = useEntityQuery([Has(Realm)]);
-
+  const armyIds = useEntityQuery([Has(Army)]);
   const realms: any[] = useMemo(
     () =>
       Array.from(realmEntityIds).map((entityId) => {
         const realm = getComponentValue(Realm, entityId) as any;
+        const army = getComponentValue(Army, entityId) as any;
         realm.entity_id = entityId;
         realm.name = realmsData["features"][realm.realm_id - 1].name;
         realm.owner = getComponentValue(Owner, entityId);
+        realm.infantry_qty = army?.infantry_qty || 0;
+        realm.cavalry_qty = army?.cavalry_qty || 0;
+        realm.mage_qty = army?.mage_qty || 0;
         realm.resources = unpackResources(BigInt(realm.resource_types_packed), realm.resource_types_count);
+
         return realm;
       }),
-    [realmEntityIds],
+    [realmEntityIds, armyIds],
   );
+  const armies: any[] = useMemo(
+    () =>
+      Array.from(armyIds).map((entityId) => {
+        const army = getComponentValue(Army, entityId) as any;
+        army.entity_id = entityId;
 
+        return army;
+      }),
+    [armyIds],
+  );
   return {
     realms,
+    armies,
+  };
+}
+
+export function useGetChallenges() {
+  const {
+    setup: {
+      components: { Challenges },
+    },
+  } = useDojo();
+
+  const challengesEntityIds = useEntityQuery([Has(Challenges)]);
+  const challenges: any[] = useMemo(
+    () =>
+      Array.from(challengesEntityIds).map((entityId) => {
+        return getComponentValue(Challenges, entityId) as any;
+      }),
+    [challengesEntityIds],
+  );
+  return {
+    challenges,
   };
 }

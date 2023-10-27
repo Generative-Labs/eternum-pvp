@@ -10,6 +10,8 @@ import { ResourcesIds } from "@bibliothecadao/eternum";
 import { UpdatedEntity } from "../../dojo/createEntitySubscription";
 import { Position } from "../../types";
 import { getRealm } from "../../utils/realms";
+import { useGetChallenges } from "../helpers/useRealm";
+import { ChallengeStateEnum } from "./useFightNotification";
 
 const LABOR_CONFIG = {
   base_food_per_cycle: 14000,
@@ -23,6 +25,7 @@ export enum EventType {
   CancelOffer,
   Harvest,
   OrderClaimable,
+  Fight,
 }
 
 type realmsResources = { realmEntityId: number; resourceIds: number[] }[];
@@ -48,7 +51,7 @@ export const useNotifications = () => {
   const {
     setup: {
       entityUpdates,
-      components: { Status, Realm, Labor, ArrivalTime, Position, Trade, FungibleEntities },
+      components: { Status, Realm, Labor, ArrivalTime, Position, Trade, FungibleEntities, Challenges },
     },
   } = useDojo();
 
@@ -56,6 +59,7 @@ export const useNotifications = () => {
   const { realmEntityIds } = useRealmStore();
   const realmsResources = useRealmsResource(realmEntityIds);
   const realmPositions = useRealmsPosition(realmEntityIds);
+  const { challenges } = useGetChallenges();
 
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
 
@@ -95,6 +99,29 @@ export const useNotifications = () => {
     // Clear interval on component unmount
     return () => clearInterval(intervalId);
   }, [nextBlockTimestamp]);
+
+  /**
+   * Fight notifications
+   */
+  useEffect(() => {
+    const updateNotifications = () => {
+      const notifications = nextBlockTimestamp
+        ? generateFightNotifications(realmEntityIds, nextBlockTimestamp, Challenges, challenges)
+        : [];
+      // add only add if not already in there
+      addUniqueNotifications(notifications, setNotifications);
+    };
+
+    // Call it once initially
+    updateNotifications();
+
+    // Set up interval to check for labor notifications every 10 seconds
+    // because with katana nextBlockTimestamp does not update until a new transaction is done
+    const intervalId = setInterval(updateNotifications, 10000);
+
+    // Clear interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [nextBlockTimestamp, challenges]);
 
   /**
    * Claimable orders notifications
@@ -244,6 +271,34 @@ const generateLaborNotifications = (
     });
   });
 
+  return notifications;
+};
+const generateFightNotifications = (
+  realmIds: any[],
+  nextBlockTimestamp: number,
+  Challenges: Component,
+  challenges: any[],
+) => {
+  const notifications: NotificationType[] = [];
+  const realmId = realmIds[0] ? realmIds[0].realmEntityId : 0;
+  const challengesEntityIds = runQuery([HasValue(Challenges, { target_id: realmId })]);
+  const myChallengesEntityIds = runQuery([HasValue(Challenges, { sender_id: realmId })]);
+  for (const entityId of new Set([...challengesEntityIds, ...myChallengesEntityIds])) {
+    const challenge = getComponentValue(Challenges, entityId) as any;
+    if (challenge.state === ChallengeStateEnum.craeted) {
+      notifications.push({
+        eventType: EventType.Fight,
+        keys: [entityId.toString(), challenge.sender_id.toString()],
+      });
+    }
+  }
+  // const challenges: any[] = useMemo(
+  //     () =>
+  //         Array.from(challengesEntityIds).map((entityId) => {
+  //
+  //         }),
+  //     [challengesEntityIds],
+  // );
   return notifications;
 };
 

@@ -20,11 +20,11 @@ mod challenge_systems{
             let (realm, owner) = get!(world, realm_id, (Realm, Owner));
             assert(owner.address == player_id, 'Realm does not belong to player');
             //get resource
-            let current_resource: Resource = get!(world, (realm_id, ResourceTypes::WHEAT), Resource);
+            let current_resource: Resource = get!(world, (realm_id, ResourceTypes::WOOD), Resource);
             assert(current_resource.balance - amount >=0, 'not enough resource');
 
             //set resource
-            set!(world, Resource {entity_id: realm_id, resource_type: ResourceTypes::WHEAT, balance: current_resource.balance - amount});
+            set!(world, Resource {entity_id: realm_id, resource_type: ResourceTypes::WOOD, balance: current_resource.balance - amount});
 
             // get army
             let current_army = get!(world, realm_id, Army);

@@ -18,6 +18,7 @@ TRADE_SYSTEMS="0x2139d726bf9c34b3d0f68e740a16233604993534ad809329ac5788fa136adf1
 HYPERSTRUCTURE_SYSTEMS="0xca23e4b5195bc2560bd537b35b9ef45f6e49a0923d8ecd36c515a423ae269";
 RESOURCE_SYSTEMS="0x3515736afe8663c5e673df2a7db08ed55b90c79b9a81e71d537d6962de6fd98";
 CARAVAN_SYSTEMS="0x693a6c8b9643cfcdb3e3eb63c3b76aca7b80eaec17d46662714ca6d2bfe8c26";
+CHALLENGE_SYSTEMS="0x45f54a4d53c73481e900bac76bb21cb05ac812bd9cd380c6edcccfdea8b37bc";
 ROAD_SYSTEMS="0x489761647ff04e1163659537e9b4967a67ddbfc3be73aa60f8039e69c3ee74d";
 TRANSPORT_UNIT_SYSTEMS="0x155b8cbe4b8c2464ab60db85411dffdd57d28320c93246dd3c02bdee2d18479";
 TRAVEL_SYSTEMS="0x70717be365c143d9f4ae207e420d0c3525a7c79197a20e6e63e4dec0b1b26cd";
@@ -242,7 +243,7 @@ commands+=(
 
 
 # Read the System to Components JSON file
-system_models_json=$(cat ./scripts/system_models.json)
+system_models_json=$(cat ./system_models.json)
 
 # Loop through each system
 for system in $(echo $system_models_json | jq -r 'keys[]'); do
