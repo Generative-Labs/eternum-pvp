@@ -9,7 +9,7 @@ sierra-replace-ids = true
 [dependencies]
 dojo = { git = "https://github.com/dojoengine/dojo", tag="v0.3.0" }
 alexandria_math = { git = "https://github.com/keep-starknet-strange/alexandria.git", rev = "e1aa42853815f04ff00e4ed3507cfd74d7b0c644" }
-cubit = { git = "https://github.com/influenceth/cubit" }
+cubit = { git = "https://github.com/influenceth/cubit", rev = "45e057467cd01205346f7cf3f573c9f11f15b0d8" }
 # TODO: use dojo_defi when works with latest nightly
 #dojo_defi = { git = "https://github.com/dojoengine/dojo" }
 
